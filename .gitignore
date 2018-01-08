@@ -1,0 +1,16 @@
+.Rhistory
+.Rapp.history
+.RData
+*-Ex.R
+/*.tar.gz
+/*.Rcheck/
+.Rproj.user/
+/__pycache__/
+
+/bin/
+/include/
+/lib/
+.idea/
+
+.Python
+pip-selfcheck.json

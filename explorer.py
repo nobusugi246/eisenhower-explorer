@@ -33,21 +33,23 @@ def find():
     # app.logger.info(path_name)
 
     contents = []
+    status = 'ok'
     try:
         cur = sorted(os.listdir(path_name))
         contents = [ {'size': os.stat(os.path.join(path_name, x)).st_size,
                       'name': x, 'isfile': os.path.isfile(os.path.join(path_name, x)) } for x in cur ]
     except PermissionError:
+        status = 'PermissionError'
         app.logger.info('PermissionError at ' + path_name)
-    finally:
-        pass
 
     # app.logger.info(contents)
-    return jsonify({'current': path_name, 'contents': contents})
+    return jsonify({'current': path_name, 'contents': contents, 'status': status})
 
 
 @app.route('/open', methods=['POST'])
 def open():
+    status = 'done: '
+
     json_data = json.loads(request.data, encoding='utf-8')
     path_name = json_data['path_name']
     if path_name == '':
@@ -61,7 +63,7 @@ def open():
 
     result = subprocess.run(['open', path_name])
     # app.logger.info(result)
-    return str(result.returncode)
+    return jsonify( { 'status': status + str(result.returncode) } )
 
 
 def get_size(start_path):

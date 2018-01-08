@@ -8,6 +8,14 @@ serverErrorHandler = (xhr, msg, ext) ->
         pos: 'bottom-center'
         timeout: 2000
 
+serverStatusHandler = (msg) ->
+    return if msg is 'ok'
+    UIkit.notification
+        message: "Server status = #{msg}"
+        status: 'warning'
+        pos: 'bottom-center'
+        timeout: 500
+
 clockVue = new Vue
     el: '#menuClock'
     data:
@@ -65,6 +73,7 @@ folderListVue = new Vue
                 data: JSON.stringify {'path_name': target_folder}
                 success: (e) ->
                     console.log 'opened.'
+                    serverStatusHandler(e.status)
                 error: (xhr, msg, ext) ->
                     serverErrorHandler(xhr, msg, ext)
         clicked: (e)->
@@ -90,6 +99,7 @@ folderListVue = new Vue
                         data: JSON.stringify {'path_name': target_folder}
                         success: (e) ->
                             folderListVue.update01 e.current, e.contents
+                            serverStatusHandler(e.status)
                         error: (xhr, msg, ext) ->
                             serverErrorHandler(xhr, msg, ext)
                 else if list_name is '01'
@@ -102,6 +112,7 @@ folderListVue = new Vue
                         data: JSON.stringify {'path_name': target_folder}
                         success: (e) ->
                             folderListVue.update02 e.current, e.contents
+                            serverStatusHandler(e.status)
                         error: (xhr, msg, ext) ->
                             serverErrorHandler(xhr, msg, ext)
                 else
@@ -114,6 +125,7 @@ folderListVue = new Vue
                         data: JSON.stringify {'path_name': target_folder}
                         success: (e) ->
                             folderListVue.update02_and_shift e.current, e.contents
+                            serverStatusHandler(e.status)
                         error: (xhr, msg, ext) ->
                             serverErrorHandler(xhr, msg, ext)
             else  # ファイルをクリック
@@ -151,6 +163,7 @@ folderListVue = new Vue
                 data: JSON.stringify {'path_name':current}
                 success: (e) ->
                     folderListVue.update e.current, [e.contents, [], []]
+                    serverStatusHandler(e.status)
                 error: (xhr, msg, ext) ->
                     serverErrorHandler(xhr, msg, ext)
     

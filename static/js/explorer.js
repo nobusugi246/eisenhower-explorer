@@ -20,7 +20,7 @@
       return;
     }
     return UIkit.notification({
-      message: `Server status = ${msg}`,
+      message: `Server status: ${msg}`,
       status: 'warning',
       pos: 'bottom-center',
       timeout: 500

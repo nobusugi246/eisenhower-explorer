@@ -120,7 +120,7 @@
                             <span v-else uk-icon="icon: folder"></span>
                         </td>
                         <td name="folder00" class="uk-text-right" style="width:10px;">
-                            <span v-if="item.isfile">{{ Math.round(item.size / 1024) }}KB</span>
+                            <span v-if="item.isfile">{{ Math.ceil(item.size / 1024) }}KB</span>
                         </td>
                         <td name="folder00" class="uk-text-truncate">
                             {{ item.name }}
@@ -149,7 +149,7 @@
                             <span v-else uk-icon="icon: folder"></span>
                         </td>
                         <td class="uk-text-right" style="width:10px;">
-                            <span v-if="item.isfile">{{ Math.round(item.size / 1024) }}KB</span>
+                            <span v-if="item.isfile">{{ Math.ceil(item.size / 1024) }}KB</span>
                         </td>
                         <td class="uk-text-truncate" name="folder01">{{ item.name }}</td>
                     </tr>
@@ -176,7 +176,7 @@
                             <span v-else uk-icon="icon: folder"></span>
                         </td>
                         <td class="uk-text-right" style="width:10px;">
-                            <span v-if="item.isfile">{{ Math.round(item.size / 1024) }}KB</span>
+                            <span v-if="item.isfile">{{ Math.ceil(item.size / 1024) }}KB</span>
                         </td>
                         <td class="uk-text-truncate" name="folder02">{{ item.name }}</td>
                     </tr>

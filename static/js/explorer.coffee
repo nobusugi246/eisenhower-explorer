@@ -11,7 +11,7 @@ serverErrorHandler = (xhr, msg, ext) ->
 serverStatusHandler = (msg) ->
     return if msg is 'ok'
     UIkit.notification
-        message: "Server status = #{msg}"
+        message: "Server status: #{msg}"
         status: 'warning'
         pos: 'bottom-center'
         timeout: 500

@@ -80,7 +80,7 @@ folderListVue = new Vue
                     serverErrorHandler(xhr, msg, ext)
         mouseenter: (e)->
             #console.log("mouse enter")
-            folderName = _.trim e.target.innerText
+            folderName = _.trim e.target.lastChild.innerText
             index = _.toInteger _.trim(e.target.firstChild.innerText)
             parentFolder = _.trim e.target.parentNode.parentNode.firstChild.innerText
             targetFolder = parentFolder + '/' + folderName

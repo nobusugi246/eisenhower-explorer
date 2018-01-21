@@ -149,7 +149,7 @@
       mouseenter: function(e) {
         var folderList, folderName, index, list_name, parentFolder, targetFolder;
         //console.log("mouse enter")
-        folderName = _.trim(e.target.innerText);
+        folderName = _.trim(e.target.lastChild.innerText);
         index = _.toInteger(_.trim(e.target.firstChild.innerText));
         parentFolder = _.trim(e.target.parentNode.parentNode.firstChild.innerText);
         targetFolder = parentFolder + '/' + folderName;

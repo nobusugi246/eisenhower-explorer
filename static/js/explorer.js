@@ -45,44 +45,61 @@
   todoVue = new Vue({
     el: '#matrix',
     data: {
+      next_id: 9,
       items00: [
         {
+          'id': 1,
           'text': 'test01',
-          'folder': 'folder01'
+          'folder': '',
+          'url': ''
         },
         {
+          'id': 2,
           'text': 'test02',
-          'folder': 'folder02'
+          'folder': '',
+          'url': ''
         }
       ],
       items01: [
         {
+          'id': 3,
           'text': 'test03',
-          'folder': 'folder03'
+          'folder': '',
+          'url': ''
         },
         {
+          'id': 4,
           'text': 'test04',
-          'folder': 'folder04'
+          'folder': '',
+          'url': ''
         }
       ],
       items02: [
         {
+          'id': 5,
           'text': 'test05',
-          'folder': 'folder05'
+          'folder': '',
+          'url': ''
         },
         {
+          'id': 6,
           'text': 'test06',
-          'folder': 'folder06'
+          'folder': '',
+          'url': ''
         }
       ],
       items03: [
         {
+          'id': 7,
           'text': 'test07',
-          'folder': 'folder07'
+          'folder': '',
+          'url': ''
         },
         {
+          'id': 8,
           'text': 'test08',
-          'folder': 'folder08'
+          'folder': '',
+          'url': ''
         }
       ]
     },
@@ -102,7 +119,8 @@
       folderList02: [],
       current00: '',
       current01: '',
-      current02: ''
+      current02: '',
+      sethover: {}
     },
     created: function() {
       return this.initialize('/');
@@ -127,6 +145,53 @@
             return serverErrorHandler(xhr, msg, ext);
           }
         });
+      },
+      mouseenter: function(e) {
+        var folderList, folderName, index, list_name, parentFolder, targetFolder;
+        //console.log("mouse enter")
+        folderName = _.trim(e.target.innerText);
+        index = _.toInteger(_.trim(e.target.firstChild.innerText));
+        parentFolder = _.trim(e.target.parentNode.parentNode.firstChild.innerText);
+        targetFolder = parentFolder + '/' + folderName;
+        targetFolder = _.replace(targetFolder, '//', '/');
+        list_name = _.trim(e.target.attributes.name.value).slice(-2);
+        folderList = this.folderList00;
+        if (list_name === '01') {
+          folderList = this.folderList01;
+        }
+        if (list_name === '02') {
+          folderList = this.folderList02;
+        }
+        if (!folderList[index].isfile) {
+          console.log(index + ", " + targetFolder);
+          console.log(e);
+          return this.sethover = setTimeout(function() {
+            e.target.classList.add('uk-animation-shake');
+            return $.ajax({
+              url: "/size",
+              method: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({
+                'path_name': targetFolder,
+                'list_name': list_name,
+                'index': index
+              }),
+              success: function(e) {
+                console.log(e);
+                serverStatusHandler(e.size);
+                return folderListVue.setFolderListSize(e.list_name, e.index, e.size);
+              },
+              error: function(xhr, msg, ext) {
+                return serverErrorHandler(xhr, msg, ext);
+              }
+            });
+          }, 3000);
+        }
+      },
+      mouseleave: function(e) {
+        // console.log("mouse leave")
+        e.target.classList = [];
+        return clearTimeout(this.sethover);
       },
       clicked: function(e) {
         var folderList, index, list_name, target_folder;
@@ -238,6 +303,17 @@
         this.folderList01 = folders[1];
         return this.folderList02 = folders[2];
       },
+      setFolderListSize: function(list_name, index, size) {
+        var folderList;
+        folderList = this.folderList00;
+        if (list_name === '01') {
+          folderList = this.folderList01;
+        }
+        if (list_name === '02') {
+          folderList = this.folderList02;
+        }
+        return folderList[index].size = size;
+      },
       initialize: function(current) {
         return $.ajax({
           url: "/find",
@@ -267,3 +343,5 @@
   });
 
 }).call(this);
+
+//# sourceMappingURL=explorer.js.map

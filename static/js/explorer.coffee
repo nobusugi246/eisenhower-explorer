@@ -30,21 +30,22 @@ clockVue = new Vue
 todoVue = new Vue
     el: '#matrix'
     data:
+        next_id: 9
         items00: [
-            {'text': 'test01', 'folder' : 'folder01'}
-            {'text': 'test02', 'folder' : 'folder02'}
+            {'id': 1, 'text': 'test01', 'folder' : '', 'url': ''}
+            {'id': 2, 'text': 'test02', 'folder' : '', 'url': ''}
         ]
         items01: [
-            {'text': 'test03', 'folder' : 'folder03'}
-            {'text': 'test04', 'folder' : 'folder04'}
+            {'id': 3, 'text': 'test03', 'folder' : '', 'url': ''}
+            {'id': 4, 'text': 'test04', 'folder' : '', 'url': ''}
         ]
         items02: [
-            {'text': 'test05', 'folder' : 'folder05'}
-            {'text': 'test06', 'folder' : 'folder06'}
+            {'id': 5, 'text': 'test05', 'folder' : '', 'url': ''}
+            {'id': 6, 'text': 'test06', 'folder' : '', 'url': ''}
         ]
         items03: [
-            {'text': 'test07', 'folder' : 'folder07'}
-            {'text': 'test08', 'folder' : 'folder08'}
+            {'id': 7, 'text': 'test07', 'folder' : '', 'url': ''}
+            {'id': 8, 'text': 'test08', 'folder' : '', 'url': ''}
         ]
     methods:
         stoped: (e)->
@@ -60,6 +61,7 @@ folderListVue = new Vue
         current00: ''
         current01: ''
         current02: ''
+        sethover: {}
     created: ()->
         @initialize('/')
     methods:
@@ -76,6 +78,38 @@ folderListVue = new Vue
                     serverStatusHandler(e.status)
                 error: (xhr, msg, ext) ->
                     serverErrorHandler(xhr, msg, ext)
+        mouseenter: (e)->
+            #console.log("mouse enter")
+            folderName = _.trim e.target.innerText
+            index = _.toInteger _.trim(e.target.firstChild.innerText)
+            parentFolder = _.trim e.target.parentNode.parentNode.firstChild.innerText
+            targetFolder = parentFolder + '/' + folderName
+            targetFolder = _.replace targetFolder, '//', '/'
+            list_name = _.trim(e.target.attributes.name.value)[-2..]
+            folderList = @folderList00
+            folderList = @folderList01 if list_name is '01'
+            folderList = @folderList02 if list_name is '02'
+            if not folderList[index].isfile
+                console.log(index + ", " + targetFolder)
+                console.log(e)
+                @sethover = setTimeout ()->
+                    e.target.classList.add('uk-animation-shake')
+                    $.ajax
+                        url: "/size"
+                        method: 'POST'
+                        contentType: 'application/json'
+                        data: JSON.stringify {'path_name': targetFolder, 'list_name': list_name, 'index': index}
+                        success: (e) ->
+                            console.log(e)
+                            serverStatusHandler(e.size)
+                            folderListVue.setFolderListSize(e.list_name, e.index, e.size)
+                        error: (xhr, msg, ext) ->
+                            serverErrorHandler(xhr, msg, ext)
+                , 3000
+        mouseleave: (e)->
+            # console.log("mouse leave")
+            e.target.classList = []
+            clearTimeout @sethover
         clicked: (e)->
             console.log 'clicked.'
             index = _.toInteger _.trim(e.target.parentElement.childNodes[0].innerText)
@@ -155,6 +189,13 @@ folderListVue = new Vue
             @folderList00 = folders[0]
             @folderList01 = folders[1]
             @folderList02 = folders[2]
+        setFolderListSize: (list_name, index, size)->
+            folderList = @folderList00
+            if list_name is '01'
+                folderList = @folderList01
+            if list_name is '02'
+                folderList = @folderList02
+            folderList[index].size = size
         initialize: (current)->
             $.ajax
                 url: "/find"

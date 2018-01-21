@@ -66,16 +66,20 @@ def open():
     return jsonify( { 'status': status + str(result.returncode) } )
 
 
-def get_size(start_path):
+@app.route('/size', methods=['POST'])
+def get_size():
+    json_data = json.loads(request.data, encoding='utf-8')
+    start_path = os.path.abspath(json_data['path_name'])
+    list_name = json_data['list_name']
+    lindex = json_data['index']
+    app.logger.info("get_size: " + start_path)
     total_size = 0
     for dirpath, dirnames, filenames in os.walk(start_path):
         for f in filenames:
             fp = os.path.join(dirpath, f)
             total_size += (os.path.getsize(fp) if os.path.isfile(fp) else 0)
-    return total_size
+    return jsonify( { 'size': total_size, 'list_name': list_name, 'index': lindex} )
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-

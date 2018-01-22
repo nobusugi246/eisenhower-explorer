@@ -61,7 +61,11 @@ def open():
         return ''
     app.logger.info(path_name)
 
-    result = subprocess.run(['open', path_name])
+    if os.name == 'nt':
+        result = subprocess.run(['explorer', path_name])
+    else:
+        result = subprocess.run(['open', path_name])
+        
     # app.logger.info(result)
     return jsonify( { 'status': status + str(result.returncode) } )
 
@@ -82,4 +86,4 @@ def get_size():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, threaded=False)

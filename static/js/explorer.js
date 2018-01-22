@@ -23,7 +23,7 @@
       message: `Server status: ${msg}`,
       status: 'warning',
       pos: 'bottom-center',
-      timeout: 500
+      timeout: 700
     });
   };
 
@@ -146,6 +146,53 @@
           }
         });
       },
+      list_mouseenter: function(e) {
+        var currentFolder, folderList, list_name;
+        list_name = _.trim(e.target.attributes.name.value).slice(-2);
+        folderList = this.folderList00;
+        currentFolder = this.current00;
+        if (list_name === '01') {
+          folderList = this.folderList01;
+          currentFolder = this.current01;
+        }
+        if (list_name === '02') {
+          folderList = this.folderList02;
+          currentFolder = this.current02;
+        }
+        return this.sethover = setTimeout(function() {
+          var i, index, item, len, results, targetFolder;
+          results = [];
+          for (index = i = 0, len = folderList.length; i < len; index = ++i) {
+            item = folderList[index];
+            if (!item.isfile) {
+              targetFolder = currentFolder + "/" + item.name;
+              targetFolder = _.replace(targetFolder, '//', '/');
+              console.log(targetFolder + ": " + index);
+              results.push($.ajax({
+                url: "/size",
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                  'path_name': targetFolder,
+                  'list_name': list_name,
+                  'index': index
+                }),
+                success: function(e) {
+                  console.log(e);
+                  folderListVue.setFolderListSize(e.list_name, e.index, e.size);
+                  return serverStatusHandler(e.list_name + ": " + e.index + ", " + e.size);
+                },
+                error: function(xhr, msg, ext) {
+                  return serverErrorHandler(xhr, msg, ext);
+                }
+              }));
+            } else {
+              results.push(void 0);
+            }
+          }
+          return results;
+        }, 2000);
+      },
       mouseenter: function(e) {
         var folderList, folderName, index, list_name, parentFolder, targetFolder;
         //console.log("mouse enter")
@@ -163,8 +210,8 @@
           folderList = this.folderList02;
         }
         if (!folderList[index].isfile) {
-          console.log(index + ", " + targetFolder);
-          console.log(e);
+          // console.log(index + ", " + targetFolder)
+          // console.log(e)
           return this.sethover = setTimeout(function() {
             e.target.classList.add('uk-animation-shake');
             return $.ajax({
@@ -178,14 +225,14 @@
               }),
               success: function(e) {
                 console.log(e);
-                serverStatusHandler(e.size);
-                return folderListVue.setFolderListSize(e.list_name, e.index, e.size);
+                folderListVue.setFolderListSize(e.list_name, e.index, e.size);
+                return serverStatusHandler(e.list_name + ": " + e.index + ", " + e.size);
               },
               error: function(xhr, msg, ext) {
                 return serverErrorHandler(xhr, msg, ext);
               }
             });
-          }, 3000);
+          }, 2000);
         }
       },
       mouseleave: function(e) {
@@ -343,5 +390,3 @@
   });
 
 }).call(this);
-
-//# sourceMappingURL=explorer.js.map

@@ -101,7 +101,7 @@
         <div>
             <table class="uk-table uk-table-small uk-table-striped">
                 <thead>
-                    <tr @click="clicked">
+                    <tr name="folder00" @click="open" @mouseenter="list_mouseenter" @mouseleave="mouseleave">
                         <td class="uk-hidden">-1</td>
                         <td name="folder00"><span uk-icon="icon: folder"></span></td>
                         <td name="folder00"></td>
@@ -125,7 +125,7 @@
                         </td>
                         <td name="folder00" class="uk-text-right" style="width:10px;">
                             <span v-if="item.isfile">{{ Math.ceil(item.size / 1024) }}KB</span>
-                            <span v-else-if="item.size > 1024">{{ Math.floor(item.size / 1024 / 1024) }}MB</span>
+                            <span v-else-if="item.size > 1024"><strong>{{ Math.ceil(item.size / 1024 / 1024) }}MB</strong></span>
                         </td>
                         <td name="folder00" class="uk-text-truncate">
                             {{ item.name }}
@@ -137,7 +137,7 @@
         <div>
             <table class="uk-table uk-table-small uk-table-striped">
                 <thead>
-                    <tr @click="open">
+                    <tr name="folder01" @click="open" @mouseenter="list_mouseenter" @mouseleave="mouseleave">
                         <td class="uk-hidden">0</td>
                         <td name="folder01"><span uk-icon="icon: folder"></span></td>
                         <td name="folder01"></td>
@@ -155,7 +155,7 @@
                         </td>
                         <td class="uk-text-right" style="width:10px;">
                             <span v-if="item.isfile">{{ Math.ceil(item.size / 1024) }}KB</span>
-                            <span v-else-if="item.size > 1024">{{ Math.floor(item.size / 1024 / 1024) }}MB</span>
+                            <span v-else-if="item.size > 1024"><strong>{{ Math.ceil(item.size / 1024 / 1024) }}MB</strong></span>
                         </td>
                         <td class="uk-text-truncate" name="folder01">{{ item.name }}</td>
                     </tr>
@@ -165,7 +165,7 @@
         <div>
             <table class="uk-table uk-table-small uk-table-striped" id="folderTable00">
                 <thead>
-                    <tr @click="open">
+                    <tr name="folder02" @click="open" @mouseenter="list_mouseenter" @mouseleave="mouseleave">
                         <td class="uk-hidden">0</td>
                         <td name="folder02"><span uk-icon="icon: folder"></span></td>
                         <td name="folder02"></td>
@@ -183,7 +183,7 @@
                         </td>
                         <td class="uk-text-right" style="width:10px;">
                             <span v-if="item.isfile">{{ Math.ceil(item.size / 1024) }}KB</span>
-                            <span v-else-if="item.size > 1024">{{ Math.floor(item.size / 1024 / 1024) }}MB</span>
+                            <span v-else-if="item.size > 1024"><strong>{{ Math.ceil(item.size / 1024 / 1024) }}MB</strong></span>
                         </td>
                         <td class="uk-text-truncate" name="folder02">{{ item.name }}</td>
                     </tr>

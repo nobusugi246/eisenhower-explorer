@@ -14,7 +14,7 @@ serverStatusHandler = (msg) ->
         message: "Server status: #{msg}"
         status: 'warning'
         pos: 'bottom-center'
-        timeout: 500
+        timeout: 700
 
 clockVue = new Vue
     el: '#menuClock'
@@ -78,6 +78,34 @@ folderListVue = new Vue
                     serverStatusHandler(e.status)
                 error: (xhr, msg, ext) ->
                     serverErrorHandler(xhr, msg, ext)
+        list_mouseenter: (e)->
+            list_name = _.trim(e.target.attributes.name.value)[-2..]
+            folderList = @folderList00
+            currentFolder = @current00
+            if list_name is '01'
+                folderList = @folderList01
+                currentFolder = @current01
+            if list_name is '02'
+                folderList = @folderList02
+                currentFolder = @current02
+            @sethover = setTimeout ()->
+                for item, index in folderList
+                    if not item.isfile
+                        targetFolder = currentFolder + "/" + item.name
+                        targetFolder = _.replace targetFolder, '//', '/'
+                        console.log targetFolder + ": " + index
+                        $.ajax
+                            url: "/size"
+                            method: 'POST'
+                            contentType: 'application/json'
+                            data: JSON.stringify {'path_name': targetFolder, 'list_name': list_name, 'index': index}
+                            success: (e) ->
+                                console.log(e)
+                                folderListVue.setFolderListSize(e.list_name, e.index, e.size)
+                                serverStatusHandler(e.list_name + ": " + e.index + ", " + e.size)
+                            error: (xhr, msg, ext) ->
+                                serverErrorHandler(xhr, msg, ext)
+            , 2000
         mouseenter: (e)->
             #console.log("mouse enter")
             folderName = _.trim e.target.lastChild.innerText
@@ -90,8 +118,8 @@ folderListVue = new Vue
             folderList = @folderList01 if list_name is '01'
             folderList = @folderList02 if list_name is '02'
             if not folderList[index].isfile
-                console.log(index + ", " + targetFolder)
-                console.log(e)
+                # console.log(index + ", " + targetFolder)
+                # console.log(e)
                 @sethover = setTimeout ()->
                     e.target.classList.add('uk-animation-shake')
                     $.ajax
@@ -101,11 +129,11 @@ folderListVue = new Vue
                         data: JSON.stringify {'path_name': targetFolder, 'list_name': list_name, 'index': index}
                         success: (e) ->
                             console.log(e)
-                            serverStatusHandler(e.size)
                             folderListVue.setFolderListSize(e.list_name, e.index, e.size)
+                            serverStatusHandler(e.list_name + ": " + e.index + ", " + e.size)
                         error: (xhr, msg, ext) ->
                             serverErrorHandler(xhr, msg, ext)
-                , 3000
+                , 2000
         mouseleave: (e)->
             # console.log("mouse leave")
             e.target.classList = []
